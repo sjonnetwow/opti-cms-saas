@@ -1,41 +1,61 @@
 {
-  "name": "@remkoj/optimizely-frontend",
-  "packageManager": "yarn@4.5.0",
+  "name": "opti-cms-saas",
+  "version": "0.1.0",
   "private": true,
   "license": "Apache-2.0",
-  "workspaces": [
-    "apps/*"
-  ],
-  "engines": {
-    "node": ">=20.0.0 <21.0.0"
-  },
-  "devDependencies": {
-    "@types/source-map-support": "^0.5.10",
-    "@yarnpkg/sdks": "^3.2.0",
-    "eslint": "8.57.1",
-    "source-map-support": "^0.5.21",
-    "typescript": "^5.6.3",
-    "vercel": "^37.6.3"
-  },
-  "exports": null,
+  "packageManager": "yarn@4.5.3",
   "scripts": {
-    "dev": "yarn workspace frontend dev",
-    "build": "yarn workspace frontend build",
-    "start": "yarn workspace frontend start",
-    "lint": "yarn workspace frontend lint",
-    "graphql:watch": "yarn workspace frontend watch",
-    "graphql:codegen": "yarn workspace frontend compile",
-    "type-check": "yarn workspace frontend tsc --pretty --noEmit",
-    "update-sdks": "yarn sdks vscode",
-    "update-deps": "yarn upgrade-interactive && yarn dedupe && yarn sdks vscode",
-    "update-yarn": "yarn set version stable && yarn install && yarn sdks vscode"
-  },
-  "resolutions": {
-    "@graphql-codegen/visitor-plugin-common": "file:./packages/graphql-codegen-visitor-plugin-common-v5.4.0-patched.tgz"
+    "dev": "next dev",
+    "build": "next build && opti-graph webhook:create",
+    "build:full": "graphql-codegen && next build && opti-graph webhook:create",
+    "start": "next start",
+    "lint": "next lint",
+    "compile": "graphql-codegen",
+    "watch": "graphql-codegen -w",
+    "webhook:create": "opti-graph webhook:create",
+    "webhook:list": "opti-graph webhook:list"
   },
   "dependencies": {
-    "clsx": "^2.1.1",
-    "framer-motion": "^11.11.11",
-    "yarn": "^1.22.22"
+    "@headlessui/react": "^2.2.0",
+    "@remkoj/optimizely-cms-nextjs": "^3.2.2",
+    "@remkoj/optimizely-cms-react": "^3.2.2",
+    "@remkoj/optimizely-graph-client": "^3.2.2",
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.7",
+    "entities": "^5.0.0",
+    "framer-motion": "^11.12.0",
+    "graphql": "^16.9.0",
+    "graphql-request": "^6.1.0",
+    "graphql-tag": "^2.12.6",
+    "next": "14.2.18",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.3",
+    "@graphql-codegen/client-preset": "^4.5.1",
+    "@graphql-codegen/fragment-matcher": "^5.0.2",
+    "@graphql-codegen/plugin-helpers": "^5.1.0",
+    "@graphql-codegen/typescript": "^4.1.2",
+    "@graphql-codegen/typescript-operations": "^4.4.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "@remkoj/optimizely-cms-api": "^3.2.2",
+    "@remkoj/optimizely-cms-cli": "^3.2.2",
+    "@remkoj/optimizely-graph-cli": "^3.2.2",
+    "@remkoj/optimizely-graph-functions": "^3.2.2",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@yarnpkg/sdks": "^3.2.0",
+    "chalk": "^5.3.0",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.18",
+    "figures": "^6.1.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.7.2"
+  },
+  "resolutions": {
+    "@graphql-codegen/visitor-plugin-common": "file:./packages/graphql-codegen-visitor-plugin-common-v5.6.0-patched.tgz"
   }
 }

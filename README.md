@@ -1,68 +1,147 @@
-# Optimizely CMS Demo Site <!-- omit in toc -->
+# Optimizely CMS Frontend Starter <!-- omit in toc -->
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+This is a [Next.js](https://nextjs.org/) project for [Optimizely CMS](https://www.optimizely.com/cms) bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app). It contains the minimum required code to start building your own frontend on top of Optimizely CMS.
 
-## Contents <!-- omit in toc -->
-- [1. Introduction](#1-introduction)
-- [2. Getting started](#2-getting-started)
-  - [2.1. Requirements](#21-requirements)
-  - [2.2. Deploying \& Configuring](#22-deploying--configuring)
-  - [2.3. Additional configuration options](#23-additional-configuration-options)
-  - [2.4. Product specific instructions](#24-product-specific-instructions)
-    - [2.4.1. Content Recommendations](#241-content-recommendations)
-- [3. Further documentation](#3-further-documentation)
+- [Preconditions](#preconditions)
+- [Install the starter](#install-the-starter)
+- [Getting Started](#getting-started)
+  - [1. Create the connection between your frontend and CMS](#1-create-the-connection-between-your-frontend-and-cms)
+  - [2. Reflect the CMS structure in the frontend](#2-reflect-the-cms-structure-in-the-frontend)
+  - [3. Test/build the frontend](#3-testbuild-the-frontend)
+  - [4. Customize the components](#4-customize-the-components)
+- [Debugging starter points](#debugging-starter-points)
+- [Usage with Optimizely CMS 12](#usage-with-optimizely-cms-12)
+  - [Adjusting the configuration](#adjusting-the-configuration)
+    - [1. Environment variables](#1-environment-variables)
+    - [2. GraphQL Codegen](#2-graphql-codegen)
+    - [3. Add Compatibility script](#3-add-compatibility-script)
+    - [4. Use the content loading / transformation functions](#4-use-the-content-loading--transformation-functions)
+  - [Known limitations](#known-limitations)
 
+## Preconditions
+This starter assumes that your environment matches these criteria:
+- You have the latest LTS version of Node.JS installed.
+- You've configured your system to use the latest stable version of yarn, if not, you can use these commands to enable the latest version of yarn.
+  - `corepack enable`
+  - `corepack install -g yarn@latest`
 
-## 1. Introduction
-This repository contains content and frontend that form the Optimizely SaaS CMS Demo Site. 
+If you're unsure about whether yarn has been installed, or you're using the latest stable version (e.g. yarn 4.3 or newer), run `yarn --version`. If installed it provides the running version of Yarn.
 
-If you're looking to build a new site from scratch, please use the [Create Next App Template](https://github.com/remkoj/optimizely-saas-starter) to create an empty frontend using the same structure and tooling as this demo site.
+## Install the starter
+To install this example/starter, use the command: `yarn create next-app -e https://github.com/remkoj/optimizely-saas-starter my-great-project`. This will install this starter into the `my-great-project` folder within the current directory.
 
-## 2. Getting started
-### 2.1. Requirements
-Make sure you're good to go, by:
-- Requesting an Optimizely CMS instance using [Sign-up for the program](https://www.optimizely.com/saas-core-waitlist/)
-- Ensure you have a GitHub account
-- Ensuring you have (at least) a hobby plan account at Vercel, or are comfortable creating one
+[`create-next-app` CLI Reference](https://nextjs.org/docs/pages/api-reference/create-next-app)
 
-After signing up for the beta instance and provisioning of the instance, you'll get an e-mail with the keys and instructions to activate your account.
+## Getting Started
 
-### 2.2. Deploying & Configuring
-[Follow these instructions to configure the CMS](docs/cms-config.md)
+### 1. Create the connection between your frontend and CMS
+Within the root folder of this project create a `.env.local`, which will hold the keys to your CMS instance. The default `.gitignore` file will make sure that the keys in this file will not be commited into the repository.
 
-After you've completed the CMS configuration instructions and collected the needed information, click the "Deploy to vercel" button below, to deploy this site to your Vercel Account
+First, start by adding the URL at which the CMS has been installed. This is typically something like https://[your instance].cms.optimizely.com/
+```bash
+OPTIMIZELY_CMS_URL=https://example.cms.optimizely.com/
+```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fepiserver%2Fcms-saas-vercel-demo&env=OPTIMIZELY_CMS_URL,OPTIMIZELY_GRAPH_SECRET,OPTIMIZELY_GRAPH_APP_KEY,OPTIMIZELY_GRAPH_SINGLE_KEY&root-directory=apps/frontend&framework=nextjs&project-name=optly-cms-demo&repository-name=optly-cms-demo&demo-title=Optimizely%20CMS%20Demo&demo-description=A%20site%20powered%20by%20the%20Optimizely%20CMS%2C%20showcasing%20the%20speed%20of%20a%20static%20site%2C%20without%20sacrificing%20editor%20capability.&demo-url=https%3A%2F%2Fsaas-cms-demo.vercel.app%2F&demo-image=https%3A%2F%2Fwww.optimizely.com%2Fglobalassets%2F02.-global-images%2Fproduct-icons%2Ffor-dark-bkgs%2Fopt-icononly_solution_icon_55px_dark_orchestrate.svg)
+Second, within your CMS, go to the dashboard and define the connection to Optimizely Graph using the variables shown below.
+```bash
+OPTIMIZELY_GRAPH_GATEWAY=
+OPTIMIZELY_GRAPH_SINGLE_KEY=
+OPTIMIZELY_GRAPH_APP_KEY=
+OPTIMIZELY_GRAPH_SECRET=
+```
 
-| Environment variable | Instruction |
-| - | - |
-| OPTIMIZELY_CMS_URL | The URL where the Optimizely CMS can be reached by the build process; for example: `https://example.cms.optimizely.com/`
-| OPTIMIZELY_GRAPH_SECRET | The Content Graph Secret can be made visible on the CMS Dashboard, within the "Render Content" section. |
-| OPTIMIZELY_GRAPH_APP_KEY | The Content Graph App key, which is shown on the CMS Dashboard, within the "Render Content" section. |
-| OPTIMIZELY_GRAPH_SINGLE_KEY | The Content Graph Single key	, which is shown on the CMS Dashboard, within the "Render Content" section. |
+Third, within your CMS, go to "Settings" > "API Clients" and create a new API Client. Define the credentials with the variables below.
+```bash
+OPTIMIZELY_CMS_CLIENT_ID=
+OPTIMIZELY_CMS_CLIENT_SECRET=
+```
 
-When the deployment has succeeded, the following steps are needed to enable "On Page Editing" or "In Context Editing".
+You can find the default configuration, and more configuration options within the `.env` file
 
-[Enable on-page / in context editing](docs/editing.md)
+### 2. Reflect the CMS structure in the frontend
+Now, with the connection defined, create the default components to reflect the structure.
 
-### 2.3. Additional configuration options
+```bash
+# Create the data structure for the components bound to Optimizely CMS
+yarn opti-cms nextjs:create
+```
 
-Please refer to the [Supported environment variables](docs/env-vars.md) document for all supported configuration options for the frontend. The steps above only outine the mimimum required configuration to obtain a working demo site. Many of the included features require additional configuration to be enabled.
+### 3. Test/build the frontend
+```bash
+# Generate the types and functions from GraphQL, based on the components
+# inside your frontend. This needs to run successfully once before the
+# dev-server can be started.
+yarn compile
 
-***Please note:** every configuration change to the environment variables requires a new deployment to become active.*
+# Start the dev-server
+yarn dev
+```
 
-### 2.4. Product specific instructions
-#### 2.4.1. Content Recommendations
-For Content Recommendations to work, the following steps are needed:
-1. Configure Content Recommendations using the environment variables of the [`Next.JS Optimizely One package`](https://www.npmjs.com/package/@remkoj/optimizely-one-nextjs#252-list-of-supported-environment-variables)
-2. Add the Content Recommendations widget using either the block (Page) or element (Experience), you will need to configure:
-   - The API Key of the delivery, which is shown as value of 'data-api-key=' in the example code within Content Recommendations
-   - The number of recommendations to show
+### 4. Customize the components
+By default all components are created in `src/components/cms`, you can now start modifying these components to build your site. The commands from step 2 are non-destructive, so you can re-run them as you define more content types within the CMS.
 
-## 3. Further documentation
-* [Local development](docs/dev-env.md)
-* [CMS Configuration](docs/cms-config.md)
-* [Enable on-page / in context editing](docs/editing.md)
-* [Supported environment variables](docs/env-vars.md)
-* [Custom demo building](docs/demo-building.md)
-* [General solution description](docs/solution/index.md)
+The Optimizely CMS CLI contains a growing number of utilities to work directly with the content and models stored within the CMS from within your development environment. Run `yarn opti-cms --help` to get an overview and description of all currently available commands
+
+## Debugging starter points
+- _GraphQL Compilation errors:_ The compilation of GraphQL queries should complete with errors, if not, running `yarn compile --verbose` typically yields more detailed information on the cause of the error.
+- _No updates:_ Content does not update after publishing in the CMS. In a deployed scenario, Optimizely Graph sends a webhook to notify the frontend of the change. 
+  - Locally this does not work, so you need to publish manually by navigating to: `http://localhost:3000/api/content/publish?token=$OPTIMIZELY_PUBLISH_TOKEN` (replace `$OPTIMIZELY_PUBLISH_TOKEN` with the value from your .env / .env.local file).
+  - On a hosted environment, the domain used to register the webhook recipient is defined by the `SITE_DOMAIN` environment variable. This defaults to `$VERCEL_BRANCH_URL` to make the registration successful on Vercel.
+  - Run `yarn webhook:list` to see recipients of content updates and verify that your webhook as been registered correctly.
+
+## Usage with Optimizely CMS 12
+
+> [!WARNING] Warning: Usage beyond designed purpose
+> These SDKs and starter have been designed to work closely with Optimizely 
+> SaaS CMS. By popular request, and due to the ability to create a CMS 12 build
+> that is similar enough to Optimizely SaaS CMS, the steps to use CMS 12 are 
+> included here.
+>
+> You are however outside the intended use-case of the SDKs and starter and
+> will need to bring the knowledge and skill-set to bridge the gap.
+
+> [!WARNING] Warning: CMS 12 Build
+> These instrunctions are created based upon a build of CMS 12, as all builds
+> are unique, there is no guarantee that it will work with your build.
+
+This starter can be made to work with Optimizely CMS 12, however it assumes the following about the build of Optimizely CMS 12:
+
+ * A Standard installation of Optimizely Graph, configured to:
+   * Synchronize all versions
+   * Use editor tokens
+ * No modifications to the Content Delivery API
+ * A configured and working installation of Optimizely CMS API - Preview 1
+
+### Adjusting the configuration
+On the frontend side, configure the Graph Endpoint and CMS endpoints as per the documentation above. Then, make the following additional configuration changes. When done, the CLI commands, like `yarn opti-cms nextjs:create` and `yarn compile` should work as expected.
+
+#### 1. Environment variables
+Add the environment variable `OPTIMIZELY_CMS_SCHEMA` with the value `OPTI-CMS-12` for all environments.
+
+```bash
+#Within .env, so it's shared across environments
+OPTIMIZELY_CMS_SCHEMA=OPTI-CMS-12
+```
+
+#### 2. GraphQL Codegen
+Due to the schema change from Optimizely CMS 12 to Optimizely SaaS CMS, the configuration of GraphQL Codegen needs to be adjusted.
+
+Within the `generates` section, add a new entry `documents`, with the value `['opti-cms:/queries/12','opti-cms:/fragments/12']`, this will change the base queries and fragments from SaaS CMS to CMS 12.
+
+Within the `presetConfig`, make sure that `recursion` has been set to `true`, so content from Inline Blocks can be fetched correctly.
+
+```json
+// Partial view of the GraphQL Codegen preset, with the changes applied
+generates: {
+  './src/gql/': {
+    documents: ['opti-cms:/queries/12','opti-cms:/fragments/12'],
+    preset: OptimizelyGraphPreset,
+    presetConfig: {
+      recursion: true,
+      gqlTagName: 'gql',
+      injections: [
+```
+
+### Known limitations
+At this time, the following cases are neither tested, nor supported
+- :warning: On-page editing has not been tested/verified
